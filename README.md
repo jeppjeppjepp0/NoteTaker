@@ -1,24 +1,22 @@
-# 11 Express.js: Note Taker
+# Note Taker 
 
-## Your Task
+## Technology Used 
 
-Your assignment is to modify starter code to create an application called Note Taker that can be used to write and save notes. This application will use an Express.js back end and will save and retrieve note data from a JSON file.
+| Technology Used         | Resource URL           | 
+| ------------- |:-------------:| 
+| JavaScript | [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)|   
+| Git | [https://git-scm.com/](https://git-scm.com/) |
+| Node.js | [https://nodejs.org/en](https://nodejs.org/en) |
+| Express.js | [https://expressjs.com/](https://expressjs.com/) |
+| Heroku | [https://www.heroku.com/?](https://www.heroku.com/?) |
 
-The application’s front end has already been created. It's your job to build the back end, connect the two, and then deploy the entire application to Heroku.
+<hr>
 
+## Description 
 
-## User Story
+This project required students to apply user post and get requests to save and view previously created notes. The full project requirements are listed below.
 
-```
-AS A small business owner
-I WANT to be able to write and save notes
-SO THAT I can organize my thoughts and keep track of tasks I need to complete
-```
-
-
-## Acceptance Criteria
-
-```
+```md
 GIVEN a note-taking application
 WHEN I open the Note Taker
 THEN I am presented with a landing page with a link to a notes page
@@ -34,97 +32,78 @@ WHEN I click on the Write icon in the navigation at the top of the page
 THEN I am presented with empty fields to enter a new note title and the note’s text in the right-hand column
 ```
 
+<hr>
 
-## Mock-Up
+## Table of Contents
 
-The following images show the web application's appearance and functionality:
+* [Code Sample](#code-sample)
+* [Usage](#usage)
+* [Learning Points](#learning-points)
+* [Author Info](#author-info)
 
-![Existing notes are listed in the left-hand column with empty fields on the right-hand side for the new note’s title and text.](./Assets/11-express-challenge-demo-01.png)
+<hr>
 
-![Note titled “Balance accounts” reads, “Balance account books by end of day Monday,” with other notes listed on the left.](./Assets/11-express-challenge-demo-02.png)
+## Code Sample
 
+The following code is the default route for the website. A `get` request is made to the root branch upon opening the website. This simply directs the user to the `index.html` file within the `public` directory. Although it is a very simple task, it is an important step to displaying the page and is an important use of get requests.
 
-## Getting Started
+```js
+app.get('/', (req, res) =>
+    res.sendFile(path.join(__dirname, './public/index.html'))
+);
+```
 
-On the back end, the application should include a `db.json` file that will be used to store and retrieve notes using the `fs` module.
+The following is the `javascript` used to save a new post to the page. The function uses the `file system` included with node to take data from the json listed within `./db/db.json` then adds the new note input from within the given field (see Usage) to the array of previously created notes. The previous notes are stored within `parsedData` then the new note is added to it so that the previous notes are not overwritten each time a new note is saved with `writeFile`. 
 
-The following HTML routes should be created:
+```js
+fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    if (err) {
+        console.error(err); // log error if error
+    } else {
+        const parsedData = JSON.parse(data); // parse previous posts 
+        parsedData.push(newNote); // add new note to previous (within the js)
 
-* `GET /notes` should return the `notes.html` file.
+        // rewrite the full json file to include new note
+        fs.writeFile('./db/db.json', JSON.stringify (parsedData, null, 4), (err) => {
+            err ? console.error(err) : console.info(`\nData written to ./db/db.json`)
+        }); 
+    }
+});
+```
 
-* `GET *` should return the `index.html` file.
+<hr>
 
-The following API routes should be created:
+## Usage 
 
-* `GET /api/notes` should read the `db.json` file and return all saved notes as JSON.
+Upon opening the page, the user is presented with a home screen that links to the create notes page.
 
-* `POST /api/notes` should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
+![homepage](./images/homepage.png)
 
+After clicking the button at the center of the screen titled `Get Started`, the user can then either view previous notes, if they exist, by clicking a previously created notes on the left sidebar. The user can also create a new note by entering text in the text boxes titled `Note Title` and `Note Text`.
 
-## Bonus
+![notes page](./images/notepage.png)
 
-You haven’t learned how to handle DELETE requests, but this application offers that functionality on the front end. As a bonus, try to add the DELETE route to the application using the following guideline:
+![previous notes](./images/prevnote.png)
 
-* `DELETE /api/notes/:id` should receive a query parameter that contains the id of a note to delete. To delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
+<hr>
 
+## Learning Points 
 
-## Grading Requirements
+Below are the following topics/methods that I learned through this project:
 
-This challenge is graded based on the following criteria: 
+ * [Node.js](https://nodejs.org/en)
+ * [NPM](https://www.npmjs.com/)
+ * [Node file system](https://www.w3schools.com/nodejs/nodejs_filesystem.asp)
+ * [Express.js](https://expressjs.com/)
+ * [Get Statements](https://expressjs.com/en/5x/api.html#app.get)
+ * [Post Statements](https://expressjs.com/en/5x/api.html#app.post.method)
 
+<hr>
 
-### Technical Acceptance Criteria: 40%
-
-* Satisfies all of the preceding acceptance criteria plus the following:
-
-  * Application front end must connect to an Express.js back end.
-
-  * Application back end must store notes that have a unique id in a JSON file.
-
-  * Application must be deployed to Heroku.
-
-
-### Deployment: 36%
-
-* Application deployed at live URL.
-
-* Application loads with no errors.
-
-* Application GitHub URL submitted.
-
-* GitHub repository contains application code.
-
-
-### Application Quality: 11%
-
-* Application console is free of errors.
-
-
-### Repository Quality: 13%
-
-* Repository has a unique name.
-
-* Repository follows best practices for file structure and naming conventions.
-
-* Repository follows best practices for class/id naming conventions, indentation, quality comments, etc.
-
-* Repository contains multiple descriptive commit messages.
-
-* Repository contains quality README file with description, screenshot, and link to deployed application.
+## Author Info
 
 
-### Bonus: +10 Points
+### Jedd Javier
 
-* Application allows users to delete notes.
-
-
-## Review
-
-You are required to submit BOTH of the following for review:
-
-* The URL of the functional, deployed application.
-
-* The URL of the GitHub repository, with a unique name and a README describing the project.
-
-- - -
-© 2023 edX Boot Camps LLC. Confidential and Proprietary. All Rights Reserved.
+* [LinkedIn](https://www.linkedin.com/in/jedd-javier-4b323426b/)
+* [Github](github.com/jeppjeppjepp0)
